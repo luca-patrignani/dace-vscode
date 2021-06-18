@@ -4,7 +4,7 @@
 import * as vscode from 'vscode';
 
 import { SdfgViewerProvider } from './components/sdfgViewer';
-import { DaCeInterface } from './daceInterface';
+import { DaCeInterface } from './daceInterface'
 import { TransformationHistoryProvider } from './components/transformationHistory';
 import { OutlineProvider } from './components/outline';
 import { AnalysisProvider } from './components/analysis';

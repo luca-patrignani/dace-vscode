@@ -16,7 +16,7 @@ function compute_scope_label(scope_entry) {
     const attributes = scope_entry.data.node.attributes;
     const base_label = attributes.label;
 
-    range_snippets = [];
+    const range_snippets = [];
     for (let i = 0; i < attributes.range.ranges.length; i++) {
         let parameter = '_';
         if (i < attributes.params.length)
