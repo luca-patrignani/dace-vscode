@@ -24,7 +24,7 @@ export class SdfgPythonDebuggerRuntime extends EventEmitter {
         this.fileAccessor = fileAccessor;
     }
 
-    private startDebugging(uri: vscode.Uri) {
+    private startDebugging(uri: vscode.Uri): void {
         let name = 'Run current SDFG';
         if (this.profile)
             name = 'Profile current SDFG';
@@ -48,7 +48,7 @@ export class SdfgPythonDebuggerRuntime extends EventEmitter {
             // adapter is started, but in case that changes, this manually takes
             // care of that issue.
             if (document.isDirty) {
-                let autoSave =
+                const autoSave =
                     DaCeVSCode.getExtensionContext()?.workspaceState.get(
                         'SDFV_autosave_before_running'
                     );
@@ -150,7 +150,7 @@ export class SdfgPythonDebuggerRuntime extends EventEmitter {
         });
     }
 
-    public async start(args: SdfgPythonLaunchRequestArguments) {
+    public async start(args: SdfgPythonLaunchRequestArguments): Promise<void> {
         let program = args.program;
 
         if (args.profile !== undefined)
@@ -213,7 +213,9 @@ export class SdfgPythonDebuggerRuntime extends EventEmitter {
         }
     }
 
-    private async run(path: string | undefined, sdfgUri: vscode.Uri) {
+    private async run(
+        path: string | undefined, sdfgUri: vscode.Uri
+    ): Promise<void> {
         if (path === undefined) {
             this.sendEvent('output', 'No path to run provided');
             this.sendEvent('end');
@@ -260,7 +262,7 @@ export class SdfgPythonDebuggerRuntime extends EventEmitter {
                         return;
                     }
 
-                    let env = {
+                    const env = {
                         ...process.env,
                         DACE_compiler_use_cache: '1',
                         DACE_profiling: '0',
@@ -297,19 +299,19 @@ export class SdfgPythonDebuggerRuntime extends EventEmitter {
         }
     }
 
-    private removeChild(child: cp.ChildProcess) {
+    private removeChild(child: cp.ChildProcess): void {
         const index: number = this.runningProcesses.indexOf(child, 0);
         if (index > -1)
             this.runningProcesses.splice(index, 1);
     }
 
-    public terminateRunning() {
+    public terminateRunning(): void {
         this.runningProcesses.forEach((child) => {
             child.kill('SIGKILL');
         });
     }
 
-    private sendEvent(event: string, ...args: any[]) {
+    private sendEvent(event: string, ...args: any[]): void {
         setImmediate(_ => {
             this.emit(event, ...args);
         });

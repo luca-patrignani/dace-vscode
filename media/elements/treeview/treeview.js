@@ -3,8 +3,10 @@
 
 class TreeViewItem {
 
-    constructor(label, tooltip, icon, init_collapsed, unfold_dblclick,
-                label_style = undefined, icon_style = undefined) {
+    constructor(
+        label, tooltip, icon, init_collapsed, unfold_dblclick,
+        label_style = undefined, icon_style = undefined
+    ) {
         this.label = label;
         this.tooltip = tooltip;
         this.icon = icon;
@@ -117,7 +119,7 @@ class TreeViewItem {
                     icon_elem.attr('style') + ';' + this.icon_style
                 );
 
-            label.append("&nbsp;");
+            label.append('&nbsp;');
         }
 
         label.append(label_text);

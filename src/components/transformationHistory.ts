@@ -9,17 +9,17 @@ import { DaCeVSCode } from '../extension';
 import { BaseComponent } from './baseComponent';
 import { ComponentMessageHandler } from './messaging/componentMessageHandler';
 
-export class TransformationHistoryProvider
-extends BaseComponent
-implements vscode.WebviewViewProvider {
+export class TransformationHistoryProvider extends BaseComponent
+    implements vscode.WebviewViewProvider {
 
     private static readonly viewType: string = 'transformationHistory';
 
     private view?: vscode.WebviewView;
 
-    private static INSTANCE: TransformationHistoryProvider | undefined = undefined;
+    private static INSTANCE: TransformationHistoryProvider | undefined =
+        undefined;
 
-    public activeHistoryItemIndex: Number | undefined = undefined;
+    public activeHistoryItemIndex: number | undefined = undefined;
 
     public static register(ctx: vscode.ExtensionContext): vscode.Disposable {
         TransformationHistoryProvider.INSTANCE =
@@ -85,8 +85,9 @@ implements vscode.WebviewViewProvider {
         });
     }
 
-    public handleMessage(message: any,
-                         origin: vscode.Webview | undefined = undefined): void {
+    public handleMessage(
+        message: any, _origin: vscode.Webview | undefined = undefined
+    ): void {
         switch (message.type) {
             case 'refresh':
                 if (message.reset_active)
@@ -99,14 +100,14 @@ implements vscode.WebviewViewProvider {
         }
     }
 
-    public clearList(reason: string | undefined) {
+    public clearList(reason: string | undefined): void {
         this.view?.webview.postMessage({
             type: 'clear_history',
             reason: reason,
         });
     }
 
-    public async refresh() {
+    public async refresh(): Promise<void> {
         this.clearList(undefined);
         const sdfg = await DaCeVSCode.getInstance().getActiveSdfg();
         if (sdfg !== undefined) {
@@ -119,7 +120,7 @@ implements vscode.WebviewViewProvider {
         }
     }
 
-    public show() {
+    public show(): void {
         this.view?.show();
     }
 

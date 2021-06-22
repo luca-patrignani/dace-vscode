@@ -7,9 +7,13 @@ import { request } from 'http';
 
 import { DaCeVSCode } from './extension';
 import { SdfgViewerProvider } from './components/sdfgViewer';
-import { MessageReceiverInterface } from './components/messaging/messageReceiverInterface';
+import {
+    MessageReceiverInterface,
+} from './components/messaging/messageReceiverInterface';
 import { TransformationListProvider } from './components/transformationList';
-import { TransformationHistoryProvider } from './components/transformationHistory';
+import {
+    TransformationHistoryProvider,
+} from './components/transformationHistory';
 import { OptimizationPanel } from './components/optimizationPanel';
 
 enum InteractionMode {
@@ -92,7 +96,7 @@ implements MessageReceiverInterface {
         uri: vscode.Uri | undefined
     ): Promise<string> {
         try {
-            let pyExt = vscode.extensions.getExtension('ms-python.python');
+            const pyExt = vscode.extensions.getExtension('ms-python.python');
             if (!pyExt) {
                 // TODO: do we want to tell the user that using the python
                 // plugin might be advisable here?
@@ -148,7 +152,7 @@ implements MessageReceiverInterface {
         return 'python';
     }
 
-    public genericErrorHandler(message: string, details?: string) {
+    public genericErrorHandler(message: string, details?: string): void {
         this.hideSpinner();
         console.error(message);
         if (details) {
@@ -163,7 +167,7 @@ implements MessageReceiverInterface {
         }
     }
 
-    private getRunDaceScriptUri(): vscode.Uri | undefined{
+    private getRunDaceScriptUri(): vscode.Uri | undefined {
         const extensionUri =
             DaCeVSCode.getInstance().getExtensionContext()?.extensionUri;
         if (!extensionUri) {
@@ -175,7 +179,9 @@ implements MessageReceiverInterface {
         return vscode.Uri.joinPath(extensionUri, 'backend', 'run_dace.py');
     }
 
-    public async startDaemonInTerminal(callback?: CallableFunction) {
+    public async startDaemonInTerminal(
+        callback?: CallableFunction
+    ): Promise<void> {
         if (this.daemonTerminal === undefined)
             this.daemonTerminal = vscode.window.createTerminal(
                 'SDFG Optimizer'
@@ -197,8 +203,9 @@ implements MessageReceiverInterface {
         }
     }
 
-    private runSdfgInTerminal(name: string, path?: string,
-                              origin?: vscode.Webview) {
+    private runSdfgInTerminal(
+        name: string, path?: string, origin?: vscode.Webview
+    ): void {
         if (!this.runTerminal)
             this.runTerminal = vscode.window.createTerminal('Run SDFG');
         this.runTerminal.show();
@@ -247,7 +254,9 @@ implements MessageReceiverInterface {
         }
     }
 
-    private pollDaemon(callback?: CallableFunction, terminalMode?: boolean) {
+    private pollDaemon(
+        callback?: CallableFunction, terminalMode?: boolean
+    ): void {
         // We poll the daemon every second to see if it's awake.
         const connectionIntervalId = setInterval(() => {
             console.log('Checking for daemon');
@@ -267,7 +276,8 @@ implements MessageReceiverInterface {
                     this.daemonBooting = false;
                     clearInterval(connectionIntervalId);
 
-                    if (vscode.workspace.getConfiguration(
+                    if (
+                        vscode.workspace.getConfiguration(
                             'dace.interface'
                         ).terminalMode === true
                     ) {
@@ -358,16 +368,16 @@ implements MessageReceiverInterface {
         }, 10000);
     }
 
-    private sendRequest(url: string,
-                        data?: any,
-                        callback?: CallableFunction,
-                        customErrorHandler?: CallableFunction) {
+    private sendRequest(
+        url: string, data?: any, callback?: CallableFunction,
+        customErrorHandler?: CallableFunction
+    ): void {
         let method = 'GET';
         let postData = undefined;
         if (data !== undefined)
             method = 'POST';
 
-        let parameters = {
+        const parameters = {
             host: 'localhost',
             port: this.port,
             path: url,
@@ -447,20 +457,21 @@ implements MessageReceiverInterface {
         req.end();
     }
 
-    private sendGetRequest(url: string,
-                           callback?: CallableFunction,
-                           customErrorHandler?: CallableFunction) {
+    private sendGetRequest(
+        url: string, callback?: CallableFunction,
+        customErrorHandler?: CallableFunction
+    ): void {
         this.sendRequest(url, undefined, callback, customErrorHandler);
     }
 
-    private sendPostRequest(url: string,
-                            requestData: any,
-                            callback?: CallableFunction,
-                            customErrorHandler?: CallableFunction) {
+    private sendPostRequest(
+        url: string, requestData: any, callback?: CallableFunction,
+        customErrorHandler?: CallableFunction
+    ): void {
         this.sendRequest(url, requestData, callback, customErrorHandler);
     }
 
-    public promptStartDaemon() {
+    public promptStartDaemon(): void {
         if (this.daemonBooting)
             return;
 
@@ -485,7 +496,7 @@ implements MessageReceiverInterface {
         });
     }
 
-    public start() {
+    public start(): void {
         // The daemon shouldn't start if it's already booting due to being
         // started from some other source, or if the optimization panel isn't
         // visible.
@@ -495,7 +506,7 @@ implements MessageReceiverInterface {
 
         this.daemonBooting = true;
 
-        const callback = () => {
+        const callback = (): void => {
             TransformationHistoryProvider.getInstance()?.refresh();
             TransformationListProvider.getInstance()?.refresh(true);
             this.querySdfgMetadata();
@@ -503,22 +514,22 @@ implements MessageReceiverInterface {
         this.startDaemonInTerminal(callback);
     }
 
-    public previewSdfg(sdfg: any, history_mode: boolean = false) {
+    public previewSdfg(sdfg: any, historyMode = false): void {
         DaCeVSCode.getInstance().getActiveEditor()?.postMessage({
             type: 'preview_sdfg',
             text: JSON.stringify(sdfg),
-            hist_state: history_mode,
+            hist_state: historyMode,
         });
     }
 
-    public exitPreview(refreshTransformations: boolean = false) {
+    public exitPreview(refreshTransformations = false): void {
         DaCeVSCode.getInstance().getActiveEditor()?.postMessage({
             type: 'exit_preview',
             refresh_transformations: refreshTransformations,
         });
     }
 
-    public showSpinner(message?: string) {
+    public showSpinner(message?: string): void {
         DaCeVSCode.getInstance().getActiveEditor()?.postMessage({
             type: 'processing',
             show: true,
@@ -527,7 +538,7 @@ implements MessageReceiverInterface {
         });
     }
 
-    public hideSpinner() {
+    public hideSpinner(): void {
         DaCeVSCode.getInstance().getActiveEditor()?.postMessage({
             type: 'processing',
             show: false,
@@ -535,9 +546,10 @@ implements MessageReceiverInterface {
         });
     }
 
-    private sendApplyTransformationRequest(transformation: any,
-                                           callback: CallableFunction,
-                                           processingMessage?: string) {
+    private sendApplyTransformationRequest(
+        transformation: any, callback: CallableFunction,
+        processingMessage?: string
+    ): void {
         if (!this.daemonRunning) {
             this.promptStartDaemon();
             return;
@@ -561,7 +573,7 @@ implements MessageReceiverInterface {
         });
     }
 
-    public expandLibraryNode(nodeid: any) {
+    public expandLibraryNode(nodeid: any): void {
         DaCeVSCode.getInstance().getActiveSdfg().then((sdfg) => {
             if (sdfg) {
                 this.showSpinner('Expanding library node');
@@ -580,14 +592,14 @@ implements MessageReceiverInterface {
         });
     }
 
-    public applyTransformation(transformation: any) {
+    public applyTransformation(transformation: any): void {
         this.sendApplyTransformationRequest(transformation, (data: any) => {
             this.hideSpinner();
             this.writeToActiveDocument(data.sdfg);
         });
     }
 
-    public previewTransformation(transformation: any) {
+    public previewTransformation(transformation: any): void {
         this.sendApplyTransformationRequest(
             transformation,
             (data: any) => {
@@ -598,7 +610,7 @@ implements MessageReceiverInterface {
         );
     }
 
-    public writeToActiveDocument(json: any) {
+    public writeToActiveDocument(json: any): void {
         const activeEditor = DaCeVSCode.getInstance().getActiveEditor();
         if (activeEditor) {
             const sdfvInstance = SdfgViewerProvider.getInstance();
@@ -617,7 +629,9 @@ implements MessageReceiverInterface {
         }
     }
 
-    private gotoHistoryPoint(index: Number | undefined, mode: InteractionMode) {
+    private gotoHistoryPoint(
+        index: number | undefined, mode: InteractionMode
+    ): void {
         const trafoHistProvider = TransformationHistoryProvider.getInstance();
         if (trafoHistProvider)
             trafoHistProvider.activeHistoryItemIndex = index;
@@ -656,7 +670,7 @@ implements MessageReceiverInterface {
                 let callback: any;
                 switch (mode) {
                     case InteractionMode.APPLY:
-                        callback = function (data: any) {
+                        callback = function (data: any): void {
                             const daceInterface = DaCeInterface.getInstance();
                             daceInterface.writeToActiveDocument(data.sdfg);
                             daceInterface.hideSpinner();
@@ -664,7 +678,7 @@ implements MessageReceiverInterface {
                         break;
                     case InteractionMode.PREVIEW:
                     default:
-                        callback = function (data: any) {
+                        callback = function (data: any): void {
                             const daceInterface = DaCeInterface.getInstance();
                             daceInterface.previewSdfg(data.sdfg, true);
                             daceInterface.hideSpinner();
@@ -684,11 +698,11 @@ implements MessageReceiverInterface {
         });
     }
 
-    public applyHistoryPoint(index: Number | undefined) {
+    public applyHistoryPoint(index: number | undefined): void {
         this.gotoHistoryPoint(index, InteractionMode.APPLY);
     }
 
-    public previewHistoryPoint(index: Number | undefined) {
+    public previewHistoryPoint(index: number | undefined): void {
         this.gotoHistoryPoint(index, InteractionMode.PREVIEW);
     }
 
@@ -706,7 +720,7 @@ implements MessageReceiverInterface {
                 return;
             }
 
-            function callback(data: any) {
+            function callback(data: any): void {
                 DaCeVSCode.getInstance().getActiveEditor()?.postMessage({
                     type: 'flopsCallback',
                     map: data.arith_ops_map,
@@ -724,8 +738,10 @@ implements MessageReceiverInterface {
         });
     }
 
-    public compileSdfgFromFile(uri: vscode.Uri, callback: CallableFunction,
-                               suppressInstrumentation: boolean = false) {
+    public compileSdfgFromFile(
+        uri: vscode.Uri, callback: CallableFunction,
+        suppressInstrumentation = false
+    ): void {
         this.sendPostRequest(
             '/compile_sdfg_from_file',
             {
@@ -736,13 +752,13 @@ implements MessageReceiverInterface {
         );
     }
 
-    public async querySdfgMetadata() {
-        async function callback(data: any) {
+    public async querySdfgMetadata(): Promise<void> {
+        async function callback(data: any): Promise<void> {
             SdfgViewerProvider.getInstance()?.handleMessage({
                 type: 'set_sdfg_metadata',
                 meta_dict: data.meta_dict,
             });
-        };
+        }
 
         if (this.daemonRunning)
             this.sendGetRequest(
@@ -751,7 +767,9 @@ implements MessageReceiverInterface {
             );
     }
 
-    public async loadTransformations(sdfg: any, selectedElements: any) {
+    public async loadTransformations(
+        sdfg: any, selectedElements: any
+    ): Promise<void> {
         TransformationListProvider.getInstance()?.handleMessage({
             type: 'show_loading',
         });
@@ -761,7 +779,7 @@ implements MessageReceiverInterface {
             return;
         }
 
-        async function callback(data: any) {
+        async function callback(data: any): Promise<void> {
             for (const elem of data.transformations) {
                 let docstring = '';
                 if (data.docstrings)
@@ -787,7 +805,7 @@ implements MessageReceiverInterface {
         );
     }
 
-    public getEnum(name: string, origin: vscode.Webview) {
+    public getEnum(name: string, origin: vscode.Webview): void {
         if (this.daemonRunning)
             this.sendGetRequest('/get_enum/' + name, (response: any) => {
                 if (response.enum)
@@ -799,7 +817,7 @@ implements MessageReceiverInterface {
             });
     }
 
-    public isRunning() {
+    public isRunning(): boolean {
         return this.daemonRunning;
     }
 

@@ -4,8 +4,10 @@
 import * as vscode from 'vscode';
 
 import { SdfgViewerProvider } from './components/sdfgViewer';
-import { DaCeInterface } from './daceInterface'
-import { TransformationHistoryProvider } from './components/transformationHistory';
+import { DaCeInterface } from './daceInterface';
+import {
+    TransformationHistoryProvider,
+} from './components/transformationHistory';
 import { OutlineProvider } from './components/outline';
 import { AnalysisProvider } from './components/analysis';
 import { TransformationListProvider } from './components/transformationList';
@@ -34,13 +36,15 @@ export class DaCeVSCode {
     private outlineProvider?: OutlineProvider = undefined;
     private analysisProvider?: AnalysisProvider = undefined;
 
-    public registerCommand(command: string, handler: (...args: any[]) => any) {
+    public registerCommand(
+        command: string, handler: (...args: any[]) => any
+    ): void {
         this.context?.subscriptions.push(vscode.commands.registerCommand(
             command, handler
         ));
     }
 
-    private openInstrumentationReport(url: vscode.Uri, report: any) {
+    private openInstrumentationReport(url: vscode.Uri, report: any): void {
         // Show the SDFG Analysis panel if it's hidden.
         if (!this.analysisProvider)
             return;
@@ -59,11 +63,8 @@ export class DaCeVSCode {
     }
 
     private openGeneratedSdfg(
-        sdfgPath: string,
-        sourcePath: string,
-        linkFile?: string,
-        argv?: string[]
-    ) {
+        sdfgPath: string, sourcePath: string, linkFile?: string, argv?: string[]
+    ): void {
         const sdfgUri = vscode.Uri.file(sdfgPath);
         vscode.commands.executeCommand(
             'vscode.openWith',
@@ -107,7 +108,6 @@ export class DaCeVSCode {
 
             if (elements.length >= 4) {
                 const name = elements[0];
-                const intermediateSdfgPath = elements[1];
                 const sdfgPath = elements[2];
                 const sourcePath = elements[3];
                 const argv = elements.slice(4, elements.length - 1);
@@ -119,7 +119,7 @@ export class DaCeVSCode {
                     vscode.Uri.file(this.activeSdfgFileName).fsPath)
                     continue;
 
-                let autoOpen = this.context?.workspaceState.get(
+                const autoOpen = this.context?.workspaceState.get(
                     'SDFV_auto_open_generated_sdfg'
                 );
 
@@ -172,7 +172,7 @@ export class DaCeVSCode {
         return true;
     }
 
-    public init(context: vscode.ExtensionContext) {
+    public init(context: vscode.ExtensionContext): void {
         this.context = context;
 
         // Register the SDFG custom editor.
@@ -256,9 +256,9 @@ export class DaCeVSCode {
         );
         perfReportWatcher.onDidCreate((url) => {
             vscode.workspace.fs.readFile(url).then((data) => {
-                let report = JSON.parse(data.toString());
+                const report = JSON.parse(data.toString());
 
-                let autoOpen = this.context?.workspaceState.get(
+                const autoOpen = this.context?.workspaceState.get(
                     'SDFV_auto_open_instrumentation_report'
                 );
 
@@ -302,11 +302,11 @@ export class DaCeVSCode {
         activateDaceDebug(context);
     }
 
-    public getExtensionContext() {
+    public getExtensionContext(): vscode.ExtensionContext | undefined {
         return this.context;
     }
 
-    public static getExtensionContext() {
+    public static getExtensionContext(): vscode.ExtensionContext | undefined {
         return this.INSTANCE.getExtensionContext();
     }
 
@@ -326,7 +326,7 @@ export class DaCeVSCode {
         return this.activeSdfgFileName;
     }
 
-    public clearActiveSdfg() {
+    public clearActiveSdfg(): void {
         this.activeSdfgFileName = undefined;
         this.activeEditor = undefined;
 
@@ -337,8 +337,9 @@ export class DaCeVSCode {
         this.trafoProvider?.clearList(clearReason);
     }
 
-    public updateActiveSdfg(activeSdfgFileName: string,
-                            activeEditor: vscode.Webview) {
+    public updateActiveSdfg(
+        activeSdfgFileName: string, activeEditor: vscode.Webview
+    ): void {
         this.activeSdfgFileName = activeSdfgFileName;
         this.activeEditor = activeEditor;
 
@@ -376,12 +377,12 @@ export class DaCeVSCode {
  * Activates the plugin.
  * @param context The extension context to load into.
  */
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext): void {
     DaCeVSCode.getInstance().init(context);
 }
 
 /**
  * Called when the extension gets deactivated, ie. when VSCode is shut down.
  */
-export function deactivate() {
+export function deactivate(): void {
 }

@@ -4,9 +4,9 @@
 import * as vscode from 'vscode';
 import { DaCeInterface } from '../../daceInterface';
 
-import { OutlineProvider } from "../outline";
-import { SdfgViewerProvider } from "../sdfgViewer";
-import { AnalysisProvider } from "../analysis";
+import { OutlineProvider } from '../outline';
+import { SdfgViewerProvider } from '../sdfgViewer';
+import { AnalysisProvider } from '../analysis';
 import { TransformationListProvider } from '../transformationList';
 import { TransformationHistoryProvider } from '../transformationHistory';
 
@@ -22,7 +22,7 @@ export class ComponentMessageHandler {
         return this.INSTANCE;
     }
 
-    public handleMessage(message: any, origin: vscode.Webview) {
+    public handleMessage(message: any, origin: vscode.Webview): void {
         if (message.type !== undefined) {
             const [target, type] = message.type.split('.');
 

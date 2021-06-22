@@ -47,7 +47,8 @@ function refresh_analysis_pane() {
         vscode.postMessage({
             type: 'analysis.refresh_analysis_pane',
             symbols: map,
-            badness_scale_method: daceRenderer.overlay_manager.badness_scale_method,
+            badness_scale_method:
+                daceRenderer.overlay_manager.badness_scale_method,
             available_overlays: {
                 'Memory Volume':
                     daceGenericSDFGOverlay.OVERLAY_TYPE.MEMORY_VOLUME,

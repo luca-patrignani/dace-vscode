@@ -8,9 +8,8 @@ import { DaCeInterface } from '../daceInterface';
 import { BaseComponent } from './baseComponent';
 import { ComponentMessageHandler } from './messaging/componentMessageHandler';
 
-export class OutlineProvider
-extends BaseComponent
-implements vscode.WebviewViewProvider {
+export class OutlineProvider extends BaseComponent
+    implements vscode.WebviewViewProvider {
 
     private static readonly viewType: string = 'sdfgOutline';
 
@@ -40,7 +39,7 @@ implements vscode.WebviewViewProvider {
         webviewView: vscode.WebviewView,
         _context: vscode.WebviewViewResolveContext,
         _token: vscode.CancellationToken
-    ) {
+    ): void {
         DaCeInterface.getInstance().start();
 
         this.view = webviewView;
@@ -81,7 +80,7 @@ implements vscode.WebviewViewProvider {
         });
     }
 
-    public handleMessage(message: any, origin: vscode.Webview): void {
+    public handleMessage(message: any, _origin: vscode.Webview): void {
         switch (message.type) {
             default:
                 this.view?.webview.postMessage(message);
@@ -89,18 +88,18 @@ implements vscode.WebviewViewProvider {
         }
     }
 
-    public clearOutline(reason: string | undefined) {
+    public clearOutline(reason: string | undefined): void {
         this.view?.webview.postMessage({
             type: 'clear_outline',
             reason: reason,
         });
     }
 
-    public refresh() {
+    public refresh(): void {
         vscode.commands.executeCommand('sdfgOutline.sync');
     }
 
-    public show() {
+    public show(): void {
         this.view?.show();
     }
 

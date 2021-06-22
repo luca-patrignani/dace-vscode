@@ -1071,7 +1071,7 @@ function generate_attributes_table(elem, xform, root) {
         }).appendTo(cat_container);
         $('<i>', {
             'class': 'attr-cat-toggle-btn-indicator material-icons',
-            'text': 'expand_less'
+            'text': 'expand_less',
         }).appendTo(cat_toggle_btn);
 
         const attr_table = $('<div>', {
@@ -1094,7 +1094,7 @@ function generate_attributes_table(elem, xform, root) {
             if (k === 'debuginfo') {
                 if (val) {
                     const gotoSourceBtn = $('#goto-source-btn');
-                    gotoSourceBtn.on('click', function() {
+                    gotoSourceBtn.on('click', function () {
                         gotoSource(
                             val.filename,
                             val.start_line,

@@ -5,7 +5,55 @@ import * as vscode from 'vscode';
 import { SdfgPythonDebugSession } from './sdfgPythonDebugSession';
 import { FileAccessor } from './sdfgPythonRuntime';
 
-export function activateSdfgPython(context: vscode.ExtensionContext) {
+class SdfgPythonDebugConfigProvider
+implements vscode.DebugConfigurationProvider {
+
+    resolveDebugConfiguration(
+        _folder: vscode.WorkspaceFolder | undefined,
+        config: vscode.DebugConfiguration,
+        _token?: vscode.CancellationToken
+    ): vscode.ProviderResult<vscode.DebugConfiguration> {
+        return config;
+    }
+
+}
+
+const workspaceFileAccessor: FileAccessor = {
+
+    async readFile(path: string): Promise<string> {
+        try {
+            return Buffer.from(
+                await vscode.workspace.fs.readFile(vscode.Uri.file(path))
+            ).toString('utf-8');
+        } catch (_e) {
+            // Retry once.
+            try {
+                return Buffer.from(
+                    await vscode.workspace.fs.readFile(vscode.Uri.file(path))
+                ).toString('utf-8');
+            } catch (_e) {
+                return `cannot read file '${path}'`;
+            }
+        }
+    },
+
+};
+
+class SdfgPythonInlineFactory
+implements vscode.DebugAdapterDescriptorFactory {
+
+    createDebugAdapterDescriptor(
+        _session: vscode.DebugSession,
+        _executable: vscode.DebugAdapterExecutable | undefined
+    ): vscode.ProviderResult<vscode.DebugAdapterDescriptor> {
+        return new vscode.DebugAdapterInlineImplementation(
+            new SdfgPythonDebugSession(workspaceFileAccessor)
+        );
+    }
+
+}
+
+export function activateSdfgPython(context: vscode.ExtensionContext): void {
     context.subscriptions.push(
         vscode.commands.registerCommand(
             'sdfg.debug.run',
@@ -51,52 +99,4 @@ export function activateSdfgPython(context: vscode.ExtensionContext) {
             new SdfgPythonInlineFactory()
         )
     );
-}
-
-class SdfgPythonDebugConfigProvider
-implements vscode.DebugConfigurationProvider {
-
-    resolveDebugConfiguration(
-        _folder: vscode.WorkspaceFolder | undefined,
-        config: vscode.DebugConfiguration,
-        _token?: vscode.CancellationToken
-    ): vscode.ProviderResult<vscode.DebugConfiguration> {
-        return config;
-    }
-
-}
-
-const workspaceFileAccessor: FileAccessor = {
-
-    async readFile(path: string): Promise<string> {
-        try {
-            return Buffer.from(
-                await vscode.workspace.fs.readFile(vscode.Uri.file(path))
-            ).toString('utf-8');
-        } catch (_e) {
-            // Retry once.
-            try {
-                return Buffer.from(
-                    await vscode.workspace.fs.readFile(vscode.Uri.file(path))
-                ).toString('utf-8');
-            } catch (_e) {
-                return `cannot read file '${path}'`;
-            }
-        }
-    }
-
-};
-
-class SdfgPythonInlineFactory
-implements vscode.DebugAdapterDescriptorFactory {
-
-    createDebugAdapterDescriptor(
-        _session: vscode.DebugSession,
-        _executable: vscode.DebugAdapterExecutable | undefined
-    ): vscode.ProviderResult<vscode.DebugAdapterDescriptor> {
-        return new vscode.DebugAdapterInlineImplementation(
-            new SdfgPythonDebugSession(workspaceFileAccessor)
-        );
-    }
-
 }

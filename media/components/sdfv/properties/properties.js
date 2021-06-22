@@ -3,7 +3,7 @@
 
 class Property {
 
-    constructor (element, xform, target, key, subkey, datatype) {
+    constructor(element, xform, target, key, subkey, datatype) {
         this.element = element;
         this.xform = xform;
         this.target = target;
@@ -46,7 +46,8 @@ class Property {
 }
 
 class KeyProperty {
-    /* 
+
+    /*
      * Note: This does not extend the Property class by design, because it
      * behaves slightly differently.
      * TODO(later): Adapt this in such a way, that it can be made a coherent

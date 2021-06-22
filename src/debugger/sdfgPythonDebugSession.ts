@@ -6,7 +6,7 @@ import {
     InitializedEvent,
     LoggingDebugSession,
     OutputEvent,
-    TerminatedEvent
+    TerminatedEvent,
 } from 'vscode-debugadapter';
 import { FileAccessor, SdfgPythonDebuggerRuntime } from './sdfgPythonRuntime';
 import { DebugProtocol } from 'vscode-debugprotocol';
@@ -30,7 +30,7 @@ export class SdfgPythonDebugSession extends LoggingDebugSession {
         this.initEventListeners();
     }
 
-    private initEventListeners() {
+    private initEventListeners(): void {
         this.runtime.on('output', (text, cat) => {
             if (cat === undefined)
                 cat = 'stdout';
@@ -45,7 +45,7 @@ export class SdfgPythonDebugSession extends LoggingDebugSession {
     protected async initializeRequest(
         response: DebugProtocol.InitializeResponse,
         _args: DebugProtocol.InitializeRequestArguments
-    ) {
+    ): Promise<void> {
         // Build and return the capabilities of this debug adapter.
         response.body = response.body || {};
 
@@ -68,7 +68,7 @@ export class SdfgPythonDebugSession extends LoggingDebugSession {
     protected async launchRequest(
         response: DebugProtocol.LaunchResponse,
         args: SdfgPythonLaunchRequestArguments
-    ) {
+    ): Promise<void> {
         Logger.logger.setup(Logger.LogLevel.Verbose, true);
 
         this.runtime.start(args);
@@ -78,7 +78,7 @@ export class SdfgPythonDebugSession extends LoggingDebugSession {
 
     protected async terminateRequest(
         response: DebugProtocol.TerminateResponse
-    ) {
+    ): Promise<void> {
         this.runtime.terminateRunning();
 
         this.sendResponse(response);

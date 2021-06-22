@@ -25,9 +25,8 @@ export class SdfgViewer {
 
 }
 
-export class SdfgViewerProvider
-extends BaseComponent
-implements vscode.CustomTextEditorProvider {
+export class SdfgViewerProvider extends BaseComponent
+    implements vscode.CustomTextEditorProvider {
 
     public static INSTANCE: SdfgViewerProvider | undefined = undefined;
 
@@ -51,37 +50,39 @@ implements vscode.CustomTextEditorProvider {
             SdfgViewerProvider.viewType,
             SdfgViewerProvider.INSTANCE,
             {
-                webviewOptions: options
+                webviewOptions: options,
             }
         );
     }
 
     /**
      * Register the current SDFG file and editor to be the last active editor.
-     * 
+     *
      * This is an unfortunate workaround because the vscode API does not allow
      * you to grab the currently active editor unless it's a TextEditor.
-     * 
+     *
      * @param document      Active SDFG document.
      * @param webview       Active SDFG editor webview.
      */
-    private updateActiveEditor(document: vscode.TextDocument,
-                               webview: vscode.Webview): void {
+    private updateActiveEditor(
+        document: vscode.TextDocument, webview: vscode.Webview
+    ): void {
         DaCeVSCode.getInstance().updateActiveSdfg(document.fileName, webview);
     }
 
     /**
      * Update the contents of the editor's webview.
-     * 
+     *
      * This also forces the transformation view to update, if the webview is the
      * last active SDFG editor.
-     * 
+     *
      * @param document      SDFG document with updated contents.
      * @param webviewPanel  SDFG editor webview panel to update.
      */
-    private updateWebview(document: vscode.TextDocument,
-                          webview: vscode.Webview,
-                          preventRefreshes: boolean = false): void {
+    private updateWebview(
+        document: vscode.TextDocument, webview: vscode.Webview,
+        preventRefreshes: boolean = false
+    ): void {
         webview.postMessage({
             type: 'update',
             text: document.getText(),
@@ -91,16 +92,17 @@ implements vscode.CustomTextEditorProvider {
 
     /**
      * Callback for when the document changes.
-     * 
+     *
      * This updates the corresponding webview accordingly.
      * If this is the last active SDFG document, we also force a reload of the
      * attached transformation panel.
-     * 
+     *
      * @param document      Changed document.
      * @param webview       Attached webview.
      */
-    private documentChanged(document: vscode.TextDocument,
-                            webview: vscode.Webview): void {
+    private documentChanged(
+        document: vscode.TextDocument, webview: vscode.Webview
+    ): void {
         this.updateWebview(document, webview);
         if (DaCeVSCode.getInstance().getActiveEditor() === webview) {
             TransformationListProvider.getInstance()?.refresh();
@@ -110,7 +112,7 @@ implements vscode.CustomTextEditorProvider {
         }
     }
 
-    public getOpenEditors() {
+    public getOpenEditors(): SdfgViewer[] {
         return this.openEditors;
     }
 
@@ -130,14 +132,15 @@ implements vscode.CustomTextEditorProvider {
         return undefined;
     }
 
-    public removeOpenEditor(webview: vscode.Webview) {
+    public removeOpenEditor(webview: vscode.Webview): void {
         const editor = this.findEditorForWebview(webview);
         if (editor)
             this.openEditors.splice(this.openEditors.indexOf(editor), 1);
     }
 
-    public handleMessage(message: any,
-                         origin: vscode.Webview | undefined = undefined): void {
+    public handleMessage(
+        message: any, origin: vscode.Webview | undefined = undefined
+    ): void {
         switch (message.type) {
             case 'get_current_sdfg':
                 const instance = SdfgViewerProvider.getInstance();
@@ -191,7 +194,9 @@ implements vscode.CustomTextEditorProvider {
                 );
                 break;
             default:
-                DaCeVSCode.getInstance().getActiveEditor()?.postMessage(message);
+                DaCeVSCode.getInstance().getActiveEditor()?.postMessage(
+                    message
+                );
                 break;
         }
     }
@@ -217,7 +222,7 @@ implements vscode.CustomTextEditorProvider {
             localResourceRoots: [
                 vscode.Uri.file(path.join(
                     this.context.extensionPath, 'media'
-                ))
+                )),
             ],
         };
         this.getHtml(webviewPanel.webview).then((html) => {
@@ -263,10 +268,10 @@ implements vscode.CustomTextEditorProvider {
 
     /**
      * Load the HTML to be displayed in the editor's webview.
-     * 
+     *
      * @param webview  Webview to load for
      * @param document Document to show in the editor's webview
-     * 
+     *
      * @returns        HTML to be displayed
      */
     private async getHtml(webview: vscode.Webview): Promise<string> {
@@ -293,13 +298,15 @@ implements vscode.CustomTextEditorProvider {
 
         // If the settings indicate it, split the webview vertically and put
         // the info container to the right instead of at the bottom.
-        if (vscode.workspace.getConfiguration(
+        if (
+            vscode.workspace.getConfiguration(
                 'dace.sdfv'
             ).layout === 'vertical'
         ) {
             baseHtml = baseHtml.replace(
                 '<div id="split-container" class="split-container-vertical">',
-                '<div id="split-container" style="display: flex;" class="split-container-horizontal">'
+                '<div id="split-container" ' +
+                'style="display: flex;" class="split-container-horizontal">'
             );
             baseHtml = baseHtml.replace(
                 'direction: \'vertical\',',

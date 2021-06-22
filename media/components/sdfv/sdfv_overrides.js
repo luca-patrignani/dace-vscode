@@ -218,12 +218,12 @@ function init_info_box() {
 
 // Redefine the standard SDFV sidebar interface with the one for the info-box.
 if (daceUIHandlers === undefined)
-    console.error("DaCe UI Handlers are not defined");
+    console.error('DaCe UI Handlers are not defined');
 
 daceUIHandlers.on_init_menu = init_info_box;
 daceUIHandlers.on_sidebar_set_title = info_box_set_title;
 daceUIHandlers.on_sidebar_show = info_box_show;
-daceUIHandlers.on_sidebar_get_contents = info_box_get_contents;
+daceUIHandlers.sidebar_get_contents = info_box_get_contents;
 daceUIHandlers.on_close_menu = clear_info_box;
 daceUIHandlers.on_outline = embedded_outline;
 // Redefine the standard SDFV element information-display function with the one

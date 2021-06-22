@@ -3,7 +3,7 @@
 
 /**
  * Get the set of element uuids affected by a given transformation.
- * 
+ *
  * @param {*} transformation    The transformation in question.
  * @returns                     An array of element uuids.
  */
@@ -63,7 +63,7 @@ function get_applicable_transformations() {
 
 /**
  * Asynchronouly sort the list of transformations in the timing thread.
- * 
+ *
  * @param {*} callback  Callback to call when sorting has been completed.
  */
 async function sort_transformations(callback) {
@@ -212,9 +212,9 @@ function clear_selected_transformation() {
 
 /**
  * For a given transformation, show its details pane in the information area.
- * 
+ *
  * This pane allows the further interaction with the transformation.
- * 
+ *
  * @param {*} trafo     The transformation to display.
  */
 function show_transformation_details(trafo) {

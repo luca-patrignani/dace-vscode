@@ -9,9 +9,8 @@ import { DaCeVSCode } from '../extension';
 import { BaseComponent } from './baseComponent';
 import { ComponentMessageHandler } from './messaging/componentMessageHandler';
 
-export class TransformationListProvider
-extends BaseComponent
-implements vscode.WebviewViewProvider {
+export class TransformationListProvider extends BaseComponent
+    implements vscode.WebviewViewProvider {
 
     private static readonly viewType: string = 'transformationList';
 
@@ -85,8 +84,9 @@ implements vscode.WebviewViewProvider {
         });
     }
 
-    public handleMessage(message: any,
-                         origin: vscode.Webview | undefined = undefined): void {
+    public handleMessage(
+        message: any, _origin: vscode.Webview | undefined = undefined
+    ): void {
         switch (message.type) {
             default:
                 this.view?.webview.postMessage(message);
@@ -94,14 +94,14 @@ implements vscode.WebviewViewProvider {
         }
     }
 
-    public clearList(reason: string | undefined) {
+    public clearList(reason: string | undefined): void {
         this.handleMessage({
             type: 'clear_transformations',
             reason: reason,
         });
     }
 
-    public refresh(hard: boolean = false) {
+    public refresh(hard: boolean = false): void {
         this.clearList(undefined);
         if (hard)
             vscode.commands.executeCommand('transformationList.sync');
@@ -111,7 +111,7 @@ implements vscode.WebviewViewProvider {
             });
     }
 
-    public show() {
+    public show(): void {
         this.view?.show();
     }
 
