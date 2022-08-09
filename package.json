@@ -393,6 +393,11 @@
                 "icon": "$(file-add)"
             },
             {
+                "command": "transformationList.getRecommendations",
+                "title": "Get Transformation Recommendations",
+                "icon": "$(file-add)"
+            },
+            {
                 "command": "transformationList.sync",
                 "title": "Refresh Transformations",
                 "icon": {
@@ -577,6 +582,11 @@
                 },
                 {
                     "command": "transformationList.sync",
+                    "when": "view == transformationList",
+                    "group": "navigation"
+                },
+                {
+                    "command": "transformationList.getRecommendations",
                     "when": "view == transformationList",
                     "group": "navigation"
                 },

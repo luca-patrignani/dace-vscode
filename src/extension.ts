@@ -272,6 +272,9 @@ export class DaCeVSCode {
                 type: 'get_applicable_transformations',
             });
         });
+        this.registerCommand('transformationList.getRecommendations', () => {
+            // TODO:
+        });
         this.registerCommand('transformationHistory.sync', () => {
             if (DaCeVSCode.getInstance().getActiveEditor() !== undefined)
                 TransformationHistoryProvider.getInstance()?.refresh();
