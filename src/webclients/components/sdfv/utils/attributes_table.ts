@@ -1272,9 +1272,20 @@ export function generateAttributesTable(
 
                 // Debug info isn't printed in the attributes table, but instead
                 // we show a button to jump to the referenced code location.
-                if (k === 'debuginfo') {
+                if (k.endsWith('debuginfo')) {
                     if (val) {
-                        const gotoSourceBtn = $('#goto-source-btn');
+                        let gotoSourceBtn : JQuery<HTMLElement>;
+                        switch (k) {
+                            case "condition_debuginfo":
+                                gotoSourceBtn = $("#goto-source-cond-btn");
+                                break;
+                            case "body_debuginfo":
+                                gotoSourceBtn = $("#goto-source-body-btn");
+                                break;
+                            default:
+                                gotoSourceBtn = $("#goto-source-btn");
+                                break;
+                        }
                         gotoSourceBtn.on('click', function() {
                             VSCodeSDFV.getInstance().gotoSource(
                                 val.filename,
